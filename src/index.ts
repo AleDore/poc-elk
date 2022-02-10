@@ -1,4 +1,6 @@
 import { loadAll } from "./utils/cosmos-loader";
+import { client } from "./utils/elastic-config";
+import { messageMetadataTemplate } from "./utils/message-template";
 
 // const indexMessages = pipe(
 //   indexWithMapping(client, INDEX_NAME),
@@ -12,4 +14,11 @@ import { loadAll } from "./utils/cosmos-loader";
 
 // indexMessages().then(console.log).catch(console.log);
 
-loadAll()().then(console.log).catch(console.log);
+client.indices
+  .putIndexTemplate({
+    name: "message-template",
+    create: true,
+    body: messageMetadataTemplate,
+  })
+  .then((_) => loadAll()().then(console.log).catch(console.log))
+  .catch(console.log);
