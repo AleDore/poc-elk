@@ -8,13 +8,15 @@ import { SearchHit } from "@elastic/elasticsearch/api/types";
 export const index = <T>(
   elkClient: Client,
   indexName: string,
-  toIndex: T
+  toIndex: T,
+  id?: string
 ): TE.TaskEither<Error, number> =>
   pipe(
     TE.tryCatch(
       () =>
         elkClient.index({
           body: toIndex,
+          id,
           index: indexName,
         }),
       E.toError
