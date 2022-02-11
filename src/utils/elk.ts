@@ -5,6 +5,34 @@ import * as O from "fp-ts/lib/Option";
 import { pipe } from "fp-ts/lib/function";
 import { SearchHit } from "@elastic/elasticsearch/api/types";
 
+export const putIndexTeplate = <T>(
+  elkClient: Client,
+  templateName: string,
+  template: T
+): TE.TaskEither<Error, number> =>
+  pipe(
+    TE.tryCatch(
+      () =>
+        elkClient.indices.putIndexTemplate({
+          body: template,
+          name: templateName,
+        }),
+      E.toError
+    ),
+    TE.map((response) => O.fromNullable(response.statusCode)),
+    TE.chain(
+      TE.fromOption(
+        () => new Error("Missing put template index response status code")
+      )
+    ),
+    TE.chain(
+      TE.fromPredicate(
+        (statusCode) => statusCode >= 200 && statusCode < 300,
+        () => new Error("Cannot put indices template data")
+      )
+    )
+  );
+
 export const index = <T>(
   elkClient: Client,
   indexName: string,
@@ -60,7 +88,9 @@ export const indexWithMapping = (
     ),
     TE.map((response) => O.fromNullable(response.statusCode)),
     TE.chain(
-      TE.fromOption(() => new Error("Cannot get index response status code"))
+      TE.fromOption(
+        () => new Error("Cannot get index with mapping response status code")
+      )
     ),
     TE.chain(
       TE.fromPredicate(
@@ -84,9 +114,9 @@ export const search = (
         // eslint-disable-next-line functional/prefer-readonly-type
         TE.map(() => response.body.hits.hits as SearchHit[]),
         TE.map((hits) => ({
-          total: hits.length,
           // eslint-disable-next-line no-underscore-dangle
           results: hits.map((hit) => hit._source),
+          total: hits.length,
         }))
       )
     )

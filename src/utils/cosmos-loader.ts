@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import {
   MessageModel,
   MESSAGE_COLLECTION_NAME,
@@ -8,10 +9,6 @@ import * as TE from "fp-ts/TaskEither";
 import * as E from "fp-ts/Either";
 import * as RA from "fp-ts/ReadonlyArray";
 import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
-import {
-  mapAsyncIterable,
-  mapAsyncIterator,
-} from "@pagopa/io-functions-commons/dist/src/utils/async";
 import * as AI from "./AsyncIterableTask";
 import { cosmosdbInstance } from "./cosmosdb";
 import { index } from "./elk";
@@ -22,7 +19,7 @@ const serviceModel = new MessageModel(
   MESSAGE_COLLECTION_NAME as NonEmptyString
 );
 
-export const loadAll = () =>
+export const loadAll = (): T.Task<void> =>
   pipe(
     serviceModel.getCollectionIterator(),
     AI.fromAsyncIterable,
@@ -30,7 +27,7 @@ export const loadAll = () =>
       pipe(
         messagesOrError,
         (x) => {
-          console.log("PROCESSING: " + x.length);
+          console.log(`PROCESSING: ${x.length}`);
           return x;
         },
         RA.filter(E.isRight),
@@ -49,7 +46,7 @@ export const loadAll = () =>
           pipe(
             index(client, INDEX_NAME, message, message.id),
             TE.mapLeft((e) => {
-              console.log("ERROR!: " + e.message);
+              console.log(`ERROR!: ${e.message}`);
               return e;
             })
           )

@@ -24,10 +24,10 @@ export const generateFakeFiscalCode = (): FiscalCode => {
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-const getMessageFixture = (idx: number,fiscalCode: FiscalCode) => ({
+const getMessageFixture = (idx: number, fiscalCode: FiscalCode) => ({
   archived: idx % 2 === 0,
   createdAt: faker.date.past(),
-  fiscalCode: fiscalCode,
+  fiscalCode,
   id: ulid.ulid(),
   indexedId: ulid.ulid(),
   isPending: faker.random.boolean(),
@@ -41,12 +41,15 @@ const getMessageFixture = (idx: number,fiscalCode: FiscalCode) => ({
 });
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export const generateMessages = (fiscalCode: FiscalCode, numberOfMessages: number) => {
+export const generateMessages = (
+  fiscalCode: FiscalCode,
+  numberOfMessages: number
+) => {
   const messages = [];
   // eslint-disable-next-line functional/no-let
   for (let idx = 1; idx < numberOfMessages + 1; idx++) {
     // eslint-disable-next-line functional/immutable-data
-    messages.push(getMessageFixture(idx,fiscalCode));
+    messages.push(getMessageFixture(idx, fiscalCode));
   }
   return messages;
 };
