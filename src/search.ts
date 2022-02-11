@@ -1,6 +1,8 @@
 import { client, INDEX_NAME } from "./utils/elastic-config";
 import { search } from "./utils/elk";
 
+client.indices.shrink();
+
 const runSearch = search(client, {
   allow_partial_search_results: false,
   body: {
