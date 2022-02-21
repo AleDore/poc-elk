@@ -8,7 +8,7 @@ import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
  * Avoids collisions with real ones as we use
  * a literal "Y" for the location field.
  */
-const generateFakeFiscalCode = (): FiscalCode => {
+export const generateFakeFiscalCode = (): FiscalCode => {
   const s = randomstring.generate({
     capitalization: "uppercase",
     charset: "alphabetic",
@@ -24,10 +24,10 @@ const generateFakeFiscalCode = (): FiscalCode => {
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-const getMessageFixture = (idx: number) => ({
+const getMessageFixture = (idx: number, fiscalCode: FiscalCode) => ({
   archived: idx % 2 === 0,
   createdAt: faker.date.past(),
-  fiscalCode: generateFakeFiscalCode(),
+  fiscalCode,
   id: ulid.ulid(),
   indexedId: ulid.ulid(),
   isPending: faker.random.boolean(),
@@ -41,12 +41,15 @@ const getMessageFixture = (idx: number) => ({
 });
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export const generateMessages = (numberOfMessages: number) => {
+export const generateMessages = (
+  fiscalCode: FiscalCode,
+  numberOfMessages: number
+) => {
   const messages = [];
   // eslint-disable-next-line functional/no-let
   for (let idx = 1; idx < numberOfMessages + 1; idx++) {
     // eslint-disable-next-line functional/immutable-data
-    messages.push(getMessageFixture(idx));
+    messages.push(getMessageFixture(idx, fiscalCode));
   }
   return messages;
 };

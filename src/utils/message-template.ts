@@ -1,11 +1,9 @@
+import { INDEX_NAME } from "./elastic-config";
+
 export const messageMetadataTemplate = {
-  index_patterns: ["messages-metadata"],
+  composed_of: [],
+  index_patterns: [INDEX_NAME],
   template: {
-    settings: {
-      index: {
-        number_of_replicas: "0",
-      },
-    },
     mappings: {
       properties: {
         archived: {
@@ -14,34 +12,38 @@ export const messageMetadataTemplate = {
         createdAt: {
           type: "date",
         },
-        timeToLive: {
-          coerce: true,
-          index: true,
-          ignore_malformed: false,
-          store: false,
-          type: "long",
-          doc_values: true,
-        },
-        read: {
-          type: "boolean",
-        },
-        senderUserId: {
-          type: "keyword",
-        },
         fiscalCode: {
           type: "keyword",
         },
         id: {
           type: "keyword",
         },
-        senderServiceId: {
-          type: "keyword",
-        },
         isPending: {
           type: "boolean",
         },
+        read: {
+          type: "boolean",
+        },
+        senderServiceId: {
+          type: "keyword",
+        },
+        senderUserId: {
+          type: "keyword",
+        },
+        timeToLive: {
+          coerce: true,
+          doc_values: true,
+          ignore_malformed: false,
+          index: true,
+          store: false,
+          type: "long",
+        },
+      },
+    },
+    settings: {
+      index: {
+        number_of_replicas: "0",
       },
     },
   },
-  composed_of: [],
 };
