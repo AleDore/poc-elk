@@ -1,4 +1,5 @@
 import { Client, RequestParams } from "@elastic/elasticsearch";
+import * as AR from "fp-ts/lib/Array";
 import * as TE from "fp-ts/lib/TaskEither";
 import * as E from "fp-ts/lib/Either";
 import * as O from "fp-ts/lib/Option";
@@ -48,6 +49,38 @@ export const index = <T>(
           index: indexName,
         }),
       E.toError
+    ),
+    TE.map((response) => O.fromNullable(response.statusCode)),
+    TE.chain(
+      TE.fromOption(() => new Error("Cannot get index response status code"))
+    ),
+    TE.chain(
+      TE.fromPredicate(
+        (statusCode) => statusCode >= 200 && statusCode < 300,
+        () => new Error("Cannot index data")
+      )
+    )
+  );
+
+export const bulkIndex = <T extends Record<string, unknown>>(
+  elkClient: Client,
+  indexName: string,
+  toIndex: ReadonlyArray<T>
+): TE.TaskEither<Error, number> =>
+  pipe(
+    // eslint-disable-next-line functional/prefer-readonly-type
+    toIndex as T[],
+    AR.map((i) => [{ index: { _index: indexName } }, i]),
+    AR.flatten,
+    TE.of,
+    TE.chain((values) =>
+      TE.tryCatch(
+        () =>
+          elkClient.bulk({
+            body: values,
+          }),
+        E.toError
+      )
     ),
     TE.map((response) => O.fromNullable(response.statusCode)),
     TE.chain(
