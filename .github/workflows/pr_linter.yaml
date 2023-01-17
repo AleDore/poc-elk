@@ -1,4 +1,4 @@
-name: "Validate PR title"
+name: "Lint PR title"
 
 on:
   pull_request_target:
@@ -10,9 +10,7 @@ on:
 jobs:
   main:
     name: Pull Request Linter
-    # You may pin to the exact commit or the version.
-    # uses: MorrisonCole/pr-lint-action@327d08270eeda69f390c2073935506556987b9a1
-    uses: MorrisonCole/pr-lint-action@v1.7.0
+    uses: MorrisonCole/pr-lint-action@327d08270eeda69f390c2073935506556987b9a1
     with:
       # Regex to ensure PR title matches. Allows anything by default.
       title-regex: ^\[(#[A-Z]*-[0-9]* ?){1,}\]
