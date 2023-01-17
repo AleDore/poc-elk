@@ -16,7 +16,7 @@ jobs:
         with:
           # Regex to ensure PR title matches. Allows anything by default.
           # "/^\[(#[A-Z]*-[0-9]* ?){1,}\]/g"
-          title-regex: "(#[A-Z]*-[0-9]* ?){1,}"
+          title-regex: "^pippo"
           # Whether the action should create a PR review & comment when the regex doesn't match.
           on-failed-regex-create-review: # optional, default is true
           # Comment for the bot to post on PRs that fail the regex. Use %regex% to reference regex.
