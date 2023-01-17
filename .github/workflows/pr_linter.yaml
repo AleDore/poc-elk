@@ -12,20 +12,6 @@ jobs:
     name: Validate PR title
     runs-on: ubuntu-22.04
     steps:
-      - uses: MorrisonCole/pr-lint-action@327d08270eeda69f390c2073935506556987b9a1
+      - uses: Slashgear/action-check-pr-title@v4.3.0
         with:
-          # Regex to ensure PR title matches. Allows anything by default.
-          # "/^\[(#[A-Z]*-[0-9]* ?){1,}\]/g"
-          title-regex: "^pippo"
-          # Whether the action should create a PR review & comment when the regex doesn't match.
-          on-failed-regex-create-review: # optional, default is true
-          # Comment for the bot to post on PRs that fail the regex. Use %regex% to reference regex.
-          on-failed-regex-comment: # optional, default is PR title failed to match %regex%
-          # Whether the action should fail when the regex doesn't match.
-          on-failed-regex-fail-action: # optional
-          # Whether the action should request changes or just provide a comment.
-          on-failed-regex-request-changes: # optional, default is true
-          # Comment for the bot to post on PRs that succeed the regex and have their review dismissed.
-          on-succeeded-regex-dismiss-review-comment: # optional, default is All good!
-          # Github token with access to the repository (secrets.GITHUB_TOKEN).
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          regexp: "^\[(#[A-Z]*-[0-9]* ?){1,}\]" # Regex the title should match.
