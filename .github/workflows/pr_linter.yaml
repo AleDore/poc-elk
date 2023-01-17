@@ -1,5 +1,11 @@
 name: "Lint PR title"
 
+on:
+  pull_request:
+      - opened
+      - edited
+      - synchronize
+
 jobs:
   main:
     name: Validate PR title
